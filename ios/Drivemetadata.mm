@@ -2,9 +2,24 @@
 
 @interface RCT_EXTERN_MODULE(Drivemetadata, NSObject)
 
-RCT_EXTERN_METHOD(multiply:(float)a withB:(float)b
+
+
+RCT_EXTERN_METHOD(sdkInit:(NSInteger)clientID
+                 withToken:(NSString *)clientToken
+                 withAppId:(NSInteger)appId
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
+RCT_EXTERN_METHOD(sendTags:(NSDictionary *)tags
+                 withEventType:(NSString *)eventType
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getBackgroundData:(NSString *)url
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+
 
 + (BOOL)requiresMainQueueSetup
 {

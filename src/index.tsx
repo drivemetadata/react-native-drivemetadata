@@ -17,6 +17,16 @@ const Drivemetadata = NativeModules.Drivemetadata
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return Drivemetadata.multiply(a, b);
+
+export function sdkInit(clientID : number, clientToken:String, appId : number) {
+  return Drivemetadata.sdkInit(clientID, clientToken, appId);
+}
+export function sendTags(tags: { [key: string]: any }, eventType: string) {
+  return Drivemetadata.sendTags(tags, eventType);
+}
+export function getBackgroundData(url: String) {
+  
+  return Drivemetadata.getBackgroundData(url)
+    .then((data: any) => console.log("Received Background Data:", data))
+    .catch((error: any) => console.error("Error fetching background data:", error));
 }
