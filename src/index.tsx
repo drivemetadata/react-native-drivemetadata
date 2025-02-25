@@ -24,9 +24,23 @@ export function sdkInit(clientID : number, clientToken:String, appId : number) {
 export function sendTags(tags: { [key: string]: any }, eventType: string) {
   return Drivemetadata.sendTags(tags, eventType);
 }
-export function getBackgroundData(url: String) {
-  
+
+export function getBackgroundData(url: string) {
+
   return Drivemetadata.getBackgroundData(url)
-    .then((data: any) => console.log("Received Background Data:", data))
-    .catch((error: any) => console.error("Error fetching background data:", error));
+    .then((data: any) => {
+      return data;  // ✅ Return the received data
+    })
+    .catch((error: any) => {
+      return null;  // ✅ Return null to avoid `undefined`
+    });
 }
+export async function requestIDFA() {
+  try {
+    const idfa = await Drivemetadata.requestIDFA(); // ✅ Await result
+    return idfa; // ✅ Return value if needed
+  } catch (error) {
+    throw error; // ✅ Ensure error is propagated
+  }
+}
+

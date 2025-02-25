@@ -1,5 +1,5 @@
-import { sdkInit, sendTags, getBackgroundData } from 'react-native-drivemetadata';
-import { Text, View, StyleSheet, Linking } from 'react-native';
+import { sdkInit, sendTags, getBackgroundData, requestIDFA } from 'react-native-drivemetadata';
+import { Text, View, StyleSheet, Linking,Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 
 export default function App() {
@@ -25,30 +25,52 @@ export default function App() {
       .then((response: any) => console.log("Tags sent successfully:", response))
       .catch((error: any) => console.error("Error sending tags:", error));
 
-  
+    
+    getIDFA();
 
   }, []);
 
+  async function getIDFA() {
+    try {
+      const idfa = await requestIDFA();
+      console.log("User's IDFA:", idfa);
+    } catch (error) {
+      console.error("Failed to get IDFA:", error);
+    }
+  }
+  
+
   // Handle Deep Linking
   useEffect(() => {
-    const handleDeepLink = (event: { url: string }) => {
+    const handleDeepLink = async (event: { url: string }) => {  // ✅ Mark function as async
       console.log("Deep Link URL:", event.url);
-
-      getBackgroundData("https://example.com/data.json")
-      .then((data: any) => console.log("Background Data:", data))
-      .catch((error: any) => console.error("Error fetching background data:", error));
-
-     
+  
+      // Show an alert when a deep link is received
+      Alert.alert("Deep Link Received", `URL: ${event.url}`);
+  
+      // Fetch background data (optional)
+      try {
+        const data = await getBackgroundData(event.url);
+  
+        if (data) {
+          console.log("✅ Final Background Data:", data);
+        } else {
+          console.error("❌ Background data is undefined/null");
+        }
+      } catch (error) {
+        console.error("❌ Error in fetchData:", error);
+      }
     };
-
+  
     // Subscribe to deep links
     const subscription = Linking.addEventListener('url', handleDeepLink);
-
+  
     // Cleanup function to remove listener when component unmounts
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, []);  // ✅ Proper use of useEffect dependency array
+  
 
   return (
     <View style={styles.container}>

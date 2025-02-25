@@ -1,10 +1,12 @@
 import DriveMetaDataiOSSDK
+import AdSupport
+import AppTrackingTransparency
 
 
 @objc(Drivemetadata)
 class Drivemetadata: NSObject {
   
-
+  
   
   @objc(sdkInit:withToken:withAppId:withResolver:withRejecter:)
   func sdkInit(clientID: Int, clientToken: String, appId: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
@@ -36,10 +38,8 @@ class Drivemetadata: NSObject {
     if let url = URL(string: url) {
       DriveMetaData.shared?.getBackgroundData(uri: url) { (jsonString, error) in
         if let error = error {
-          print("Error: \(error.localizedDescription)")
           reject("BACKGROUND_DATA_ERROR", error.localizedDescription, error)
         } else if let jsonString = jsonString {
-          print("Received data: \(jsonString)")
           resolve(jsonString)
         } else {
           reject("UNKNOWN_ERROR", "No data received", nil)
@@ -50,4 +50,26 @@ class Drivemetadata: NSObject {
       print("Invalid URL")
     }
   }
+  @objc(requestIDFA:rejecter:)
+  func requestIDFA(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+    DispatchQueue.main.async {
+      if #available(iOS 14, *) {
+        ATTrackingManager.requestTrackingAuthorization { status in
+          switch status {
+          case .authorized:
+            let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+            resolve(idfa)
+          case .denied, .restricted, .notDetermined:
+            resolve(nil) // Return `nil` if not authorized
+          @unknown default:
+            resolve(nil)
+          }
+        }
+      } else {
+        let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+        resolve(idfa)
+      }
+    }
+  }
+  
 }
