@@ -31,7 +31,7 @@ export function getBackgroundData(url: string) {
     .then((data: any) => {
       return data;  // ✅ Return the received data
     })
-    .catch((error: any) => {
+    .catch((_error: any) => {
       return null;  // ✅ Return null to avoid `undefined`
     });
 }
